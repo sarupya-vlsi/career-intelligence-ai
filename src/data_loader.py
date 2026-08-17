@@ -22,13 +22,15 @@ EXPECTED_COLUMNS = [
 
 def load_raw_data(file_path: str = None) -> pd.DataFrame:
     """
-    Loads raw HR dataset from local path or default repository location.
+    Loads raw HR dataset from local path or standard directory structure.
     """
     if file_path is None or not os.path.exists(file_path):
-        # Default lookups
         candidate_paths = [
+            "data/raw/Palo Alto Networks(1).csv",
+            os.path.join(os.path.dirname(__file__), "..", "data", "raw", "Palo Alto Networks(1).csv"),
             "Palo Alto Networks(1).csv",
             os.path.join(os.path.dirname(__file__), "..", "Palo Alto Networks(1).csv"),
+            os.path.join(os.getcwd(), "data", "raw", "Palo Alto Networks(1).csv"),
             os.path.join(os.getcwd(), "Palo Alto Networks(1).csv")
         ]
         for p in candidate_paths:

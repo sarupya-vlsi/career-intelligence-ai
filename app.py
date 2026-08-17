@@ -645,17 +645,55 @@ elif selected_module == "Research & Executive Brief":
     doc_tab1, doc_tab2 = st.tabs(["Research Paper (Full Text)", "Executive Summary & Policy Brief"])
 
     with doc_tab1:
-        research_paper_path = os.path.join(os.path.dirname(__file__), "RESEARCH_PAPER.md")
-        if os.path.exists(research_paper_path):
-            with open(research_paper_path, "r", encoding="utf-8") as f:
-                st.markdown(f.read())
-        else:
-            st.info("Research paper document is available in the repository root as RESEARCH_PAPER.md.")
+        pdf_rp_path = "reports/Research_Paper.pdf"
+        if os.path.exists(pdf_rp_path):
+            with open(pdf_rp_path, "rb") as f:
+                st.download_button(
+                    label="Download Official Research Paper (PDF)",
+                    data=f.read(),
+                    file_name="Palo_Alto_Networks_Career_Intelligence_Research_Paper.pdf",
+                    mime="application/pdf"
+                )
+        st.markdown("<br/>", unsafe_allow_html=True)
+        research_paths = [
+            os.path.join(os.path.dirname(__file__), "docs", "RESEARCH_PAPER.md"),
+            os.path.join(os.path.dirname(__file__), "RESEARCH_PAPER.md"),
+            "docs/RESEARCH_PAPER.md",
+            "RESEARCH_PAPER.md"
+        ]
+        loaded_rp = False
+        for p in research_paths:
+            if os.path.exists(p):
+                with open(p, "r", encoding="utf-8") as f:
+                    st.markdown(f.read())
+                loaded_rp = True
+                break
+        if not loaded_rp:
+            st.info("Research paper document is available in docs/RESEARCH_PAPER.md.")
 
     with doc_tab2:
-        exec_summary_path = os.path.join(os.path.dirname(__file__), "EXECUTIVE_SUMMARY.md")
-        if os.path.exists(exec_summary_path):
-            with open(exec_summary_path, "r", encoding="utf-8") as f:
-                st.markdown(f.read())
-        else:
-            st.info("Executive summary document is available in the repository root as EXECUTIVE_SUMMARY.md.")
+        pdf_es_path = "reports/Executive_Summary.pdf"
+        if os.path.exists(pdf_es_path):
+            with open(pdf_es_path, "rb") as f:
+                st.download_button(
+                    label="Download Executive Summary & Policy Brief (PDF)",
+                    data=f.read(),
+                    file_name="Palo_Alto_Networks_Executive_Summary.pdf",
+                    mime="application/pdf"
+                )
+        st.markdown("<br/>", unsafe_allow_html=True)
+        exec_paths = [
+            os.path.join(os.path.dirname(__file__), "docs", "EXECUTIVE_SUMMARY.md"),
+            os.path.join(os.path.dirname(__file__), "EXECUTIVE_SUMMARY.md"),
+            "docs/EXECUTIVE_SUMMARY.md",
+            "EXECUTIVE_SUMMARY.md"
+        ]
+        loaded_es = False
+        for p in exec_paths:
+            if os.path.exists(p):
+                with open(p, "r", encoding="utf-8") as f:
+                    st.markdown(f.read())
+                loaded_es = True
+                break
+        if not loaded_es:
+            st.info("Executive summary document is available in docs/EXECUTIVE_SUMMARY.md.")

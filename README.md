@@ -153,22 +153,38 @@ Deploying this app live to **Streamlit Community Cloud** takes under 2 minutes:
 ## Repository Structure
 
 ```
-├── Palo Alto Networks(1).csv      # Enterprise HR workforce dataset
-├── app.py                         # Main Streamlit web application (8 modules)
-├── requirements.txt               # Locked Python dependencies
-├── RESEARCH_PAPER.md              # Formal academic/industry research paper
-├── EXECUTIVE_SUMMARY.md           # C-Suite & government stakeholder briefing
-├── README.md                      # Project documentation and deployment guide
-├── .streamlit/
-│   └── config.toml                # Enterprise slate theme configuration
+├── data/
+│   ├── raw/
+│   │   └── Palo Alto Networks(1).csv      # Raw enterprise dataset
+│   └── processed/
+│       └── panw_engineered_features.csv   # Feature-engineered workforce dataset
+├── docs/
+│   ├── RESEARCH_PAPER.md                  # Comprehensive academic/industry research paper
+│   ├── EXECUTIVE_SUMMARY.md               # C-Suite & government stakeholder briefing
+│   └── METHODOLOGY_GUIDE.md               # Mathematical & algorithmic implementation guide
+├── models/
+│   └── career_intelligence_model.pkl      # Persisted clustering model & scaler artifacts
+├── notebooks/
+│   └── 01_exploratory_data_analysis_and_clustering.ipynb  # Interactive EDA & ML Notebook
+├── reports/
+│   ├── research_paper.md                  # Formatted project report
+│   └── executive_summary.md               # Executive report brief
 ├── src/
 │   ├── __init__.py
-│   ├── data_loader.py             # Feature engineering & dataset preparation
-│   ├── ml_pipeline.py             # K-Means, Hierarchical, PCA, and simulation
-│   ├── analytics.py               # Managerial matrices & KPI aggregations
-│   └── ui_components.py           # Custom CSS, metrics cards, Plotly charts
-└── tests/
-    └── test_pipeline.py           # Automated unit test suite
+│   ├── data_loader.py                     # Data loading & feature engineering
+│   ├── ml_pipeline.py                     # Unsupervised clustering & simulation
+│   ├── analytics.py                       # KPI aggregations & managerial matrices
+│   └── ui_components.py                   # UI styling, metric cards, Plotly charts
+├── tests/
+│   └── test_pipeline.py                   # Automated unit test suite
+├── .streamlit/
+│   └── config.toml                        # Enterprise slate theme configuration
+├── .gitignore                             # Python, data science & OS gitignore
+├── LICENSE                                # MIT License
+├── requirements.txt                       # Locked dependencies
+├── main.py                                # CLI pipeline orchestrator & artifact generator
+├── app.py                                 # Streamlit multi-module web application
+└── README.md                              # Comprehensive GitHub documentation
 ```
 
 ---
