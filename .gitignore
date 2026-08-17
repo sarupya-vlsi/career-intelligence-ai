@@ -68,3 +68,28 @@ ehthumbs.db
 
 # Logs and runtime traces
 *.log
+
+# ====================================================================
+# LaTeX Auxiliary & Intermediate Build Artifacts
+# ====================================================================
+*.aux
+*.lof
+*.lot
+*.out
+*.toc
+*.bbl
+*.blg
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.nav
+*.snm
+*.vrb
+*.dvi
+*.xdv
+*.fmt
+*.upa
+*.upb
+*.tcolorbox.tcbtemp
+*.run.xml
+*-blx.bib

@@ -642,9 +642,35 @@ elif selected_module == "Research & Executive Brief":
         tag="Documentation"
     )
 
-    doc_tab1, doc_tab2 = st.tabs(["Research Paper (Full Text)", "Executive Summary & Policy Brief"])
+    doc_tab1, doc_tab2, doc_tab3 = st.tabs([
+        "Master Project Report (Complete)",
+        "Research Paper (Academic)",
+        "Executive Summary & Policy Brief"
+    ])
 
     with doc_tab1:
+        pdf_proj_path = "reports/project_report.pdf"
+        if os.path.exists(pdf_proj_path):
+            with open(pdf_proj_path, "rb") as f:
+                st.download_button(
+                    label="Download Master Project Report (PDF)",
+                    data=f.read(),
+                    file_name="Palo_Alto_Networks_Master_Project_Report.pdf",
+                    mime="application/pdf"
+                )
+        st.markdown("<br/>", unsafe_allow_html=True)
+        proj_paths = [
+            os.path.join(os.path.dirname(__file__), "reports", "project_report.md"),
+            "reports/project_report.md",
+            os.path.join(os.path.dirname(__file__), "docs", "RESEARCH_PAPER.md")
+        ]
+        for p in proj_paths:
+            if os.path.exists(p):
+                with open(p, "r", encoding="utf-8") as f:
+                    st.markdown(f.read())
+                break
+
+    with doc_tab2:
         pdf_rp_path = "reports/Research_Paper.pdf"
         if os.path.exists(pdf_rp_path):
             with open(pdf_rp_path, "rb") as f:
@@ -656,10 +682,10 @@ elif selected_module == "Research & Executive Brief":
                 )
         st.markdown("<br/>", unsafe_allow_html=True)
         research_paths = [
+            os.path.join(os.path.dirname(__file__), "reports", "research_paper.md"),
             os.path.join(os.path.dirname(__file__), "docs", "RESEARCH_PAPER.md"),
-            os.path.join(os.path.dirname(__file__), "RESEARCH_PAPER.md"),
-            "docs/RESEARCH_PAPER.md",
-            "RESEARCH_PAPER.md"
+            "reports/research_paper.md",
+            "docs/RESEARCH_PAPER.md"
         ]
         loaded_rp = False
         for p in research_paths:
@@ -669,9 +695,9 @@ elif selected_module == "Research & Executive Brief":
                 loaded_rp = True
                 break
         if not loaded_rp:
-            st.info("Research paper document is available in docs/RESEARCH_PAPER.md.")
+            st.info("Research paper document is available in reports/research_paper.md.")
 
-    with doc_tab2:
+    with doc_tab3:
         pdf_es_path = "reports/Executive_Summary.pdf"
         if os.path.exists(pdf_es_path):
             with open(pdf_es_path, "rb") as f:
@@ -683,10 +709,10 @@ elif selected_module == "Research & Executive Brief":
                 )
         st.markdown("<br/>", unsafe_allow_html=True)
         exec_paths = [
+            os.path.join(os.path.dirname(__file__), "reports", "executive_summary.md"),
             os.path.join(os.path.dirname(__file__), "docs", "EXECUTIVE_SUMMARY.md"),
-            os.path.join(os.path.dirname(__file__), "EXECUTIVE_SUMMARY.md"),
-            "docs/EXECUTIVE_SUMMARY.md",
-            "EXECUTIVE_SUMMARY.md"
+            "reports/executive_summary.md",
+            "docs/EXECUTIVE_SUMMARY.md"
         ]
         loaded_es = False
         for p in exec_paths:
@@ -696,4 +722,5 @@ elif selected_module == "Research & Executive Brief":
                 loaded_es = True
                 break
         if not loaded_es:
-            st.info("Executive summary document is available in docs/EXECUTIVE_SUMMARY.md.")
+            st.info("Executive summary document is available in reports/executive_summary.md.")
+
