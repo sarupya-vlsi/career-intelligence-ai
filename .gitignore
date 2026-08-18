@@ -4,6 +4,7 @@
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
+*/__pycache__/*
 *.py[cod]
 *$py.class
 *.so
@@ -27,7 +28,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# Virtual environments
+# Virtual environments & secrets
 venv/
 env/
 ENV/
@@ -35,16 +36,15 @@ env.bak/
 venv.bak/
 .venv/
 .env
-
-# Streamlit specific
+.env.*
 .streamlit/secrets.toml
 
 # Jupyter Notebook & IPython checkpoints
-.ipynb_checkpoints
+.ipynb_checkpoints/
 */.ipynb_checkpoints/*
 .ipython/
 
-# Unit test & coverage artifacts
+# Unit test, linting & coverage artifacts
 .tox/
 .coverage
 .coverage.*
@@ -54,6 +54,8 @@ coverage.xml
 *.cover
 *.py,cover
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 htmlcov/
 
 # IDEs, Editors & OS files
@@ -62,9 +64,13 @@ htmlcov/
 *.swp
 *.swo
 *~
+*.bak
+*.tmp
+*.temp
 .DS_Store
 Thumbs.db
 ehthumbs.db
+desktop.ini
 
 # Logs and runtime traces
 *.log
@@ -80,6 +86,7 @@ ehthumbs.db
 *.bbl
 *.blg
 *.synctex.gz
+*.synctex
 *.fls
 *.fdb_latexmk
 *.nav
@@ -93,3 +100,13 @@ ehthumbs.db
 *.tcolorbox.tcbtemp
 *.run.xml
 *-blx.bib
+*.bcf
+*.ist
+*.glo
+*.gls
+*.idx
+*.ind
+*.ilg
+*.thm
+*.listing
+*.prv
