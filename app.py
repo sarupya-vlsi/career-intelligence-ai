@@ -57,14 +57,18 @@ except Exception as e:
 # -------------------------------------------------------------
 with st.sidebar:
     st.markdown("""
-    <div style="padding: 10px 0 16px 0; border-bottom: 1px solid #1F2937; margin-bottom: 16px;">
-        <div style="font-size: 0.72rem; font-weight: 700; color: #0EA5E9; letter-spacing: 0.08em; text-transform: uppercase;">Enterprise Analytics</div>
-        <div style="font-size: 1.05rem; font-weight: 700; color: #F8FAFC; margin-top: 2px;">Palo Alto Networks</div>
-        <div style="font-size: 0.78rem; color: #94A3B8;">Career Intelligence & Retention</div>
+    <div style="padding: 6px 0 16px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.07); margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 28px; height: 28px; border-radius: 6px; background: linear-gradient(135deg, #38BDF8, #818CF8); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.82rem; color: #090D16;">P</div>
+            <div>
+                <div style="font-size: 0.96rem; font-weight: 600; color: #F8FAFC; line-height: 1.2;">Palo Alto Networks</div>
+                <div style="font-size: 0.74rem; color: #94A3B8;">Career Intelligence</div>
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("<div style='font-size: 0.74rem; font-weight: 600; text-transform: uppercase; color: #94A3B8; margin-bottom: 8px;'>Navigation</div>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #64748B; margin-bottom: 6px;'>Navigation</div>", unsafe_allow_html=True)
     selected_module = st.radio(
         "Navigation",
         [
@@ -74,13 +78,12 @@ with st.sidebar:
             "Retention Opportunity Panel",
             "Managerial & Leadership Impact",
             "Career Simulator & What-If Lab",
-            "Workforce Data Explorer",
-            "Research & Executive Brief"
+            "Workforce Data Explorer"
         ],
         label_visibility="collapsed"
     )
 
-    st.markdown("<div style='padding-top: 14px; border-top: 1px solid #1F2937; margin-top: 14px; font-size: 0.74rem; font-weight: 600; text-transform: uppercase; color: #94A3B8; margin-bottom: 8px;'>Workforce Filters</div>", unsafe_allow_html=True)
+    st.markdown("<div style='padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.07); margin-top: 14px; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #64748B; margin-bottom: 6px;'>Filters</div>", unsafe_allow_html=True)
 
     # Filter: Department
     departments = ["All"] + sorted(df['Department'].unique().tolist())
@@ -108,9 +111,8 @@ with st.sidebar:
     min_risk_threshold = st.slider("Minimum Stagnation Risk Score", 0, 100, 0, step=5)
 
     st.markdown("""
-    <div style="padding-top: 20px; border-top: 1px solid #1F2937; margin-top: 20px; font-size: 0.72rem; color: #64748B; text-align: center;">
-        PANW Career Intelligence Engine v1.0<br/>
-        Unsupervised Workforce Modeling
+    <div style="padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, 0.07); margin-top: 18px; font-size: 0.70rem; color: #64748B; text-align: center;">
+        Talent Analytics &middot; v2.0
     </div>
     """, unsafe_allow_html=True)
 
@@ -146,52 +148,52 @@ if min_risk_threshold > 0:
 # -------------------------------------------------------------
 if selected_module == "Executive Overview":
     render_header(
-        title="Executive Overview & Workforce Health",
-        subtitle="Enterprise career velocity, stagnation risk distributions, and proactive talent retention indicators.",
-        tag="Executive Cockpit"
+        title="Workforce & Retention Overview",
+        subtitle="Executive snapshot of talent velocity, stagnation risk distributions, and proactive retention signals.",
+        tag="Overview"
     )
 
     kpis = get_executive_kpis(filtered_df)
 
     c1, c2, c3, c4, c5 = st.columns(5)
     with c1:
-        render_metric_card("Total Headcount", f"{kpis['total_employees']:,}", f"{kpis['active_employees']} Active Staff", "#0EA5E9")
+        render_metric_card("Total Headcount", f"{kpis['total_employees']:,}", f"{kpis['active_employees']} Active", "#38BDF8")
     with c2:
-        render_metric_card("Stagnation Risk Rate", f"{kpis['high_promo_risk_pct']}%", f"{kpis['high_promo_risk']} High-Risk Profiles", "#F43F5E")
+        render_metric_card("Stagnation Risk Rate", f"{kpis['high_promo_risk_pct']}%", f"{kpis['high_promo_risk']} High-Risk Profiles", "#FB7185")
     with c3:
-        render_metric_card("Retention Action Queue", f"{kpis['immediate_roi_interventions']}", f"{kpis['immediate_roi_pct']}% of Active Workforce", "#F59E0B")
+        render_metric_card("Retention Queue", f"{kpis['immediate_roi_interventions']}", f"{kpis['immediate_roi_pct']}% of Active Workforce", "#FBBF24")
     with c4:
-        render_metric_card("Mean Promotion Gap", f"{kpis['avg_years_without_promo']} yrs", "Years Since Last Advancement", "#6366F1")
+        render_metric_card("Mean Promotion Gap", f"{kpis['avg_years_without_promo']} yrs", "Avg Years Since Promo", "#818CF8")
     with c5:
-        render_metric_card("Workforce Attrition Rate", f"{kpis['attrition_rate']}%", "Historical Baseline", "#64748B")
+        render_metric_card("Attrition Rate", f"{kpis['attrition_rate']}%", "Historical Baseline", "#94A3B8")
 
     st.markdown("<br/>", unsafe_allow_html=True)
 
     col_left, col_right = st.columns([6, 4])
 
     with col_left:
-        st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Career Archetype Distribution by Stagnation Risk</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Career Archetype by Stagnation Risk</div>", unsafe_allow_html=True)
         fig_bar = px.histogram(
             filtered_df,
             x='CareerCluster',
             color='PromotionGapRiskLevel',
             barmode='group',
-            color_discrete_map={'Low Risk': '#10B981', 'Medium Risk': '#F59E0B', 'High Risk': '#F43F5E'},
+            color_discrete_map={'Low Risk': '#34D399', 'Medium Risk': '#FBBF24', 'High Risk': '#FB7185'},
             title=""
         )
         fig_bar.update_layout(
-            paper_bgcolor='#111827',
-            plot_bgcolor='#0B0F17',
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
             font=dict(color='#E2E8F0', family='Inter', size=11),
-            xaxis=dict(gridcolor='#1E293B', title=''),
-            yaxis=dict(gridcolor='#1E293B', title='Headcount'),
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, bgcolor='#111827'),
-            margin=dict(l=20, r=20, t=30, b=20)
+            xaxis=dict(gridcolor='rgba(255,255,255,0.06)', title=''),
+            yaxis=dict(gridcolor='rgba(255,255,255,0.06)', title='Headcount'),
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, bgcolor='rgba(17, 23, 38, 0.8)'),
+            margin=dict(l=20, r=20, t=25, b=20)
         )
         st.plotly_chart(fig_bar, use_container_width=True)
 
     with col_right:
-        st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Department Retention Priority Share</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Retention Opportunity by Department</div>", unsafe_allow_html=True)
         dept_risk = filtered_df.groupby('Department')['RetentionOpportunityIndex'].mean().reset_index()
         fig_donut = px.pie(
             dept_risk,
@@ -199,11 +201,11 @@ if selected_module == "Executive Overview":
             values='RetentionOpportunityIndex',
             hole=0.6,
             color='Department',
-            color_discrete_sequence=['#0EA5E9', '#6366F1', '#38BDF8'],
+            color_discrete_sequence=['#38BDF8', '#818CF8', '#34D399'],
             title=""
         )
         fig_donut.update_layout(
-            paper_bgcolor='#111827',
+            paper_bgcolor='rgba(0,0,0,0)',
             font=dict(color='#E2E8F0', family='Inter', size=11),
             legend=dict(orientation="h", y=-0.15, x=0.5, xanchor="center"),
             margin=dict(l=20, r=20, t=20, b=30)
@@ -213,7 +215,7 @@ if selected_module == "Executive Overview":
     high_urgency_count = len(filtered_df[filtered_df['RetentionPriorityLevel'] == 'Immediate Action'])
     st.markdown(f"""
     <div class="custom-alert">
-        <strong>Proactive Intelligence Alert:</strong> Identified <strong>{high_urgency_count} active employees</strong> with high performance ratings who are experiencing substantial promotion gaps. Initiating structured career reviews now directly prevents voluntary disengagement.
+        <strong>Retention Insight:</strong> <strong>{high_urgency_count} active employees</strong> with high performance ratings are experiencing promotion delays. Proactive career check-ins directly support retention.
     </div>
     """, unsafe_allow_html=True)
 
@@ -223,25 +225,25 @@ if selected_module == "Executive Overview":
 # -------------------------------------------------------------
 elif selected_module == "Career Path Clustering":
     render_header(
-        title="Career Path Clustering & Archetype Segmentation",
-        subtitle="Unsupervised multi-dimensional segmentation (K-Means & Hierarchical) uncovering career trajectory archetypes.",
-        tag="Unsupervised ML"
+        title="Career Trajectory Clustering",
+        subtitle="Multidimensional clustering discovering natural career progression and mobility patterns.",
+        tag="Clustering"
     )
 
     tab_2d, tab_3d, tab_radar, tab_benchmarks = st.tabs([
-        "2D PCA Cluster Map",
-        "3D Spatial Projection",
-        "Archetype Radar Profiles",
-        "Model Validation & Metrics"
+        "2D Cluster Map",
+        "3D Projection",
+        "Archetype Profiles",
+        "Model Validation"
     ])
 
     with tab_2d:
         st.plotly_chart(create_pca_scatter_plot(filtered_df, is_3d=False), use_container_width=True)
-        st.caption("PCA reduces 12 career progression dimensions to 2 orthogonal axes capturing the majority of trajectory variance.")
+        st.caption("PCA reduces 12 career progression dimensions to 2 principal components.")
 
     with tab_3d:
         st.plotly_chart(create_pca_scatter_plot(filtered_df, is_3d=True), use_container_width=True)
-        st.caption("3D interactive projection enabling spatial inspection and rotation across career cluster boundaries.")
+        st.caption("Interactive 3D projection showing cluster boundaries in career space.")
 
     with tab_radar:
         col_r_left, col_r_right = st.columns([6, 4])
@@ -249,29 +251,29 @@ elif selected_module == "Career Path Clustering":
             radar_dict = get_archetype_radar_data(filtered_df)
             st.plotly_chart(create_radar_chart(radar_dict), use_container_width=True)
         with col_r_right:
-            st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin-bottom: 12px;'>Archetype Definitions & Prescriptive Strategies</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin-bottom: 12px;'>Archetype Definitions & Strategies</div>", unsafe_allow_html=True)
             for arch_name, arch_info in ARCHETYPE_DESCRIPTIONS.items():
                 st.markdown(f"""
-                <div style="background: #111827; border: 1px solid #1F2937; border-left: 3px solid {arch_info['color']}; padding: 12px 14px; border-radius: 6px; margin-bottom: 10px;">
-                    <div style="font-size: 0.86rem; font-weight: 600; color: {arch_info['color']};">{arch_info['badge']}</div>
+                <div style="background: #111726; border: 1px solid rgba(255, 255, 255, 0.07); border-left: 3px solid {arch_info['color']}; padding: 12px 14px; border-radius: 8px; margin-bottom: 10px;">
+                    <div style="font-size: 0.84rem; font-weight: 600; color: {arch_info['color']};">{arch_info['badge']}</div>
                     <div style="font-size: 0.80rem; color: #CBD5E1; margin: 4px 0 2px 0;">{arch_info['summary']}</div>
-                    <div style="font-size: 0.76rem; color: #94A3B8;"><strong>Talent Strategy:</strong> {arch_info['strategy']}</div>
+                    <div style="font-size: 0.75rem; color: #94A3B8;"><strong>Strategy:</strong> {arch_info['strategy']}</div>
                 </div>
                 """, unsafe_allow_html=True)
 
     with tab_benchmarks:
-        st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin-bottom: 12px;'>Unsupervised Cluster Quality Metrics</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin-bottom: 12px;'>Clustering Evaluation Metrics</div>", unsafe_allow_html=True)
         m_col1, m_col2, m_col3, m_col4 = st.columns(4)
         with m_col1:
-            render_metric_card("K-Means Silhouette", f"{ml_model.metrics.get('silhouette_kmeans', 0.22):.3f}", "Optimal Partitioning Index", "#0EA5E9")
+            render_metric_card("K-Means Silhouette", f"{ml_model.metrics.get('silhouette_kmeans', 0.22):.3f}", "Partitioning Quality", "#38BDF8")
         with m_col2:
-            render_metric_card("Hierarchical Silhouette", f"{ml_model.metrics.get('silhouette_hierarchical', 0.21):.3f}", "Agglomerative Baseline", "#6366F1")
+            render_metric_card("Hierarchical Silhouette", f"{ml_model.metrics.get('silhouette_hierarchical', 0.21):.3f}", "Agglomerative Baseline", "#818CF8")
         with m_col3:
-            render_metric_card("Calinski-Harabasz", f"{ml_model.metrics.get('calinski_harabasz', 341.0):.1f}", "Variance Ratio Criterion", "#10B981")
+            render_metric_card("Calinski-Harabasz", f"{ml_model.metrics.get('calinski_harabasz', 341.0):.1f}", "Variance Ratio", "#34D399")
         with m_col4:
-            render_metric_card("Cumulative PCA Variance", f"{ml_model.metrics.get('pca_3d_variance', 0.63)*100:.1f}%", "Captured Information Ratio", "#8B5CF6")
+            render_metric_card("Cumulative PCA Variance", f"{ml_model.metrics.get('pca_3d_variance', 0.63)*100:.1f}%", "3D Explained Variance", "#C084FC")
 
-        st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin: 16px 0 8px 0;'>Cluster Centroid Means Across Feature Dimensions</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin: 16px 0 8px 0;'>Cluster Centroid Means</div>", unsafe_allow_html=True)
         cluster_summary = filtered_df.groupby('CareerCluster')[CLUSTERING_FEATURES + ['PromotionGapRiskScore']].mean().round(2)
         st.dataframe(cluster_summary, use_container_width=True)
 
@@ -281,9 +283,9 @@ elif selected_module == "Career Path Clustering":
 # -------------------------------------------------------------
 elif selected_module == "Promotion Gap Monitor":
     render_header(
-        title="Promotion Gap & Career Stagnation Monitor",
-        subtitle="Role-level velocity tracking, stagnation heatmaps, and threshold-based bottleneck detection.",
-        tag="Stagnation Analytics"
+        title="Promotion Gap & Stagnation Monitor",
+        subtitle="Role tenure benchmarks, promotion latency, and bottleneck detection across departments.",
+        tag="Promotion Tracking"
     )
 
     col_gap_1, col_gap_2 = st.columns([6, 4])
@@ -292,30 +294,30 @@ elif selected_module == "Promotion Gap Monitor":
         st.plotly_chart(create_stagnation_heatmap(filtered_df), use_container_width=True)
 
     with col_gap_2:
-        st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Role Tenure vs Promotion Latency</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Role Tenure vs Promotion Latency</div>", unsafe_allow_html=True)
         fig_scatter = px.scatter(
             filtered_df,
             x='YearsInCurrentRole',
             y='YearsSinceLastPromotion',
             color='PromotionGapRiskLevel',
             size='PromotionGapRiskScore',
-            color_discrete_map={'Low Risk': '#10B981', 'Medium Risk': '#F59E0B', 'High Risk': '#F43F5E'},
+            color_discrete_map={'Low Risk': '#34D399', 'Medium Risk': '#FBBF24', 'High Risk': '#FB7185'},
             hover_name='EmployeeID',
             hover_data=['JobRole', 'Department', 'YearsAtCompany'],
             title=""
         )
         fig_scatter.update_layout(
-            paper_bgcolor='#111827',
-            plot_bgcolor='#0B0F17',
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
             font=dict(color='#E2E8F0', family='Inter', size=11),
-            xaxis=dict(gridcolor='#1E293B', title='Years in Current Role'),
-            yaxis=dict(gridcolor='#1E293B', title='Years Since Last Promotion'),
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, bgcolor='#111827'),
-            margin=dict(l=20, r=20, t=30, b=20)
+            xaxis=dict(gridcolor='rgba(255,255,255,0.06)', title='Years in Current Role'),
+            yaxis=dict(gridcolor='rgba(255,255,255,0.06)', title='Years Since Last Promotion'),
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, bgcolor='rgba(17, 23, 38, 0.8)'),
+            margin=dict(l=20, r=20, t=25, b=20)
         )
         st.plotly_chart(fig_scatter, use_container_width=True)
 
-    st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin: 16px 0 8px 0;'>Department & Job Role Stagnation Breakdown</div>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin: 16px 0 8px 0;'>Department & Role Stagnation Breakdown</div>", unsafe_allow_html=True)
     stagnation_matrix = get_role_stagnation_matrix(filtered_df)
     st.dataframe(stagnation_matrix, use_container_width=True, hide_index=True)
 
@@ -325,13 +327,13 @@ elif selected_module == "Promotion Gap Monitor":
 # -------------------------------------------------------------
 elif selected_module == "Retention Opportunity Panel":
     render_header(
-        title="Proactive Retention Opportunity Action Panel",
-        subtitle="Prioritized roster of active high-performing talent with career stagnation signals and prescriptive interventions.",
-        tag="Prescriptive AI"
+        title="Retention Action Queue",
+        subtitle="High-performing employees experiencing career mobility gaps, with targeted action recommendations.",
+        tag="Action Roster"
     )
 
     action_filter = st.selectbox(
-        "Filter by Prescriptive Action Type:",
+        "Filter by Recommended Action:",
         ["All Actions", "Fast-Track Promotion Review", "Lateral Role Rotation", "Executive Upskilling", "Mentorship Realignment"]
     )
 
@@ -343,23 +345,22 @@ elif selected_module == "Retention Opportunity Panel":
     col_q1, col_q2 = st.columns([7, 3])
 
     with col_q1:
-        st.markdown(f"<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>High-Priority Action Candidates ({len(priority_queue)} Total)</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Action Candidates ({len(priority_queue)} Total)</div>", unsafe_allow_html=True)
         st.dataframe(
             priority_queue,
             use_container_width=True,
             hide_index=True,
             column_config={
-                "RetentionOpportunityIndex": st.column_config.ProgressColumn("Retention Opportunity Index", min_value=0, max_value=100, format="%.1f"),
-                "PromotionGapRiskScore": st.column_config.ProgressColumn("Promotion Risk Score", min_value=0, max_value=100, format="%.1f")
+                "RetentionOpportunityIndex": st.column_config.ProgressColumn("Opportunity Index", min_value=0, max_value=100, format="%.1f"),
+                "PromotionGapRiskScore": st.column_config.ProgressColumn("Stagnation Risk", min_value=0, max_value=100, format="%.1f")
             }
         )
 
     with col_q2:
-        st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Prescriptive Action Breakdown</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Action Distribution</div>", unsafe_allow_html=True)
         action_counts = priority_queue['PrescriptiveAction'].value_counts().reset_index()
         action_counts.columns = ['PrescriptiveAction', 'Count']
         
-        # Clean compact labels for donut chart
         label_map = {
             "Fast-Track Promotion Review & Compensation Adjustment": "Promotion Review",
             "Lateral Role Rotation & Cross-Department Project Assignment": "Role Rotation",
@@ -375,11 +376,11 @@ elif selected_module == "Retention Opportunity Panel":
             names='ShortAction',
             values='Count',
             hole=0.55,
-            color_discrete_sequence=['#0EA5E9', '#6366F1', '#F59E0B', '#F43F5E', '#10B981'],
+            color_discrete_sequence=['#38BDF8', '#818CF8', '#FBBF24', '#FB7185', '#34D399'],
             title=""
         )
         fig_actions.update_layout(
-            paper_bgcolor='#111827',
+            paper_bgcolor='rgba(0,0,0,0)',
             font=dict(color='#E2E8F0', family='Inter', size=11),
             legend=dict(orientation="h", y=-0.15, x=0.5, xanchor="center"),
             margin=dict(l=10, r=10, t=10, b=20)
@@ -388,9 +389,9 @@ elif selected_module == "Retention Opportunity Panel":
 
     csv_data = priority_queue.to_csv(index=False).encode('utf-8')
     st.download_button(
-        label="Download Retention Action Roster (CSV)",
+        label="Download Action Roster (CSV)",
         data=csv_data,
-        file_name="panw_retention_opportunity_roster.csv",
+        file_name="panw_retention_action_roster.csv",
         mime="text/csv"
     )
 
@@ -400,9 +401,9 @@ elif selected_module == "Retention Opportunity Panel":
 # -------------------------------------------------------------
 elif selected_module == "Managerial & Leadership Impact":
     render_header(
-        title="Managerial Continuity & Leadership Impact Matrix",
-        subtitle="Evaluating the correlation between supervisor tenure, team career progression, and stagnation dyads.",
-        tag="Leadership Analytics"
+        title="Leadership & Managerial Continuity",
+        subtitle="Evaluating the link between manager-team tenure, team progression, and promotion cadence.",
+        tag="Team Dynamics"
     )
 
     mgr_matrix = get_manager_insight_matrix(filtered_df)
@@ -411,11 +412,11 @@ elif selected_module == "Managerial & Leadership Impact":
     col_m1, col_m2 = st.columns([5, 5])
 
     with col_m1:
-        st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Manager Tenure Cohort Statistics</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Manager Tenure Cohort Statistics</div>", unsafe_allow_html=True)
         st.dataframe(mgr_matrix, use_container_width=True, hide_index=True)
 
     with col_m2:
-        st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Manager Stability Impact Distribution</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Manager Continuity Distribution</div>", unsafe_allow_html=True)
         impact_counts = filtered_df['ManagerStabilityImpact'].value_counts().reset_index()
         impact_counts.columns = ['StabilityCategory', 'Headcount']
         fig_mgr_pie = px.pie(
@@ -424,22 +425,22 @@ elif selected_module == "Managerial & Leadership Impact":
             values='Headcount',
             color='StabilityCategory',
             color_discrete_map={
-                'Prolonged Stagnant Manager Dyad': '#F43F5E',
-                'Stable Leadership Continuity': '#10B981',
-                'Moderate Manager Continuity': '#6366F1',
-                'Recent Manager Transition': '#F59E0B'
+                'Prolonged Stagnant Manager Dyad': '#FB7185',
+                'Stable Leadership Continuity': '#34D399',
+                'Moderate Manager Continuity': '#818CF8',
+                'Recent Manager Transition': '#FBBF24'
             },
             hole=0.55
         )
         fig_mgr_pie.update_layout(
-            paper_bgcolor='#111827',
+            paper_bgcolor='rgba(0,0,0,0)',
             font=dict(color='#E2E8F0', family='Inter', size=11),
             legend=dict(orientation="h", y=-0.15, x=0.5, xanchor="center"),
             margin=dict(l=20, r=20, t=20, b=30)
         )
         st.plotly_chart(fig_mgr_pie, use_container_width=True)
 
-    st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin: 18px 0 8px 0;'>Team-Level Stagnation & Leadership Bottleneck Signals</div>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin: 18px 0 8px 0;'>Team Promotion Indicators by Role</div>", unsafe_allow_html=True)
     team_signals = filtered_df.groupby(['Department', 'JobRole']).agg(
         TeamHeadcount=('EmployeeID', 'count'),
         AvgYearsWithManager=('YearsWithCurrManager', 'mean'),
@@ -458,27 +459,27 @@ elif selected_module == "Managerial & Leadership Impact":
 # -------------------------------------------------------------
 elif selected_module == "Career Simulator & What-If Lab":
     render_header(
-        title="Individual Career Simulator & What-If Lab",
-        subtitle="Simulate talent management interventions (promotions, lateral rotations, upskilling) and observe real-time risk mitigation.",
-        tag="Simulation Engine"
+        title="Career Simulator & Scenario Lab",
+        subtitle="Simulate transitions (promotions, lateral moves, training) and observe projected trajectory changes.",
+        tag="Simulator"
     )
 
     sim_col1, sim_col2 = st.columns([4, 6])
 
     with sim_col1:
-        st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Target Employee Profile</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Target Employee Profile</div>", unsafe_allow_html=True)
         sample_emp_ids = filtered_df['EmployeeID'].tolist()
         selected_emp_id = st.selectbox("Select Employee ID", sample_emp_ids, index=0 if sample_emp_ids else None)
 
         if selected_emp_id:
             emp_row = df[df['EmployeeID'] == selected_emp_id].iloc[0]
             st.markdown(f"""
-            <div style="background: #111827; border: 1px solid #1F2937; border-radius: 6px; padding: 12px 14px; margin-bottom: 12px;">
-                <div style="font-size: 0.92rem; font-weight: 700; color: #F8FAFC;">{emp_row['EmployeeID']} &mdash; {emp_row['JobRole']}</div>
-                <div style="font-size: 0.80rem; color: #94A3B8; margin-top: 4px;">Department: {emp_row['Department']} | Job Level: {emp_row['JobLevel']}</div>
-                <div style="font-size: 0.80rem; color: #94A3B8;">Years at Company: {emp_row['YearsAtCompany']} | Years in Current Role: {emp_row['YearsInCurrentRole']}</div>
-                <div style="font-size: 0.80rem; color: #94A3B8;">Years Since Last Promotion: {emp_row['YearsSinceLastPromotion']} | Performance: {emp_row['PerformanceRating']}/4</div>
-                <div style="font-size: 0.80rem; color: #0EA5E9; margin-top: 4px; font-weight: 600;">Current Cluster: {emp_row['CareerCluster']}</div>
+            <div style="background: #111726; border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px;">
+                <div style="font-size: 0.92rem; font-weight: 600; color: #F8FAFC;">{emp_row['EmployeeID']} &mdash; {emp_row['JobRole']}</div>
+                <div style="font-size: 0.78rem; color: #94A3B8; margin-top: 4px;">Department: {emp_row['Department']} | Level: {emp_row['JobLevel']}</div>
+                <div style="font-size: 0.78rem; color: #94A3B8;">Tenure: {emp_row['YearsAtCompany']} yrs | In Current Role: {emp_row['YearsInCurrentRole']} yrs</div>
+                <div style="font-size: 0.78rem; color: #94A3B8;">Last Promotion: {emp_row['YearsSinceLastPromotion']} yrs ago | Rating: {emp_row['PerformanceRating']}/4</div>
+                <div style="font-size: 0.78rem; color: #38BDF8; margin-top: 4px; font-weight: 500;">Current Cluster: {emp_row['CareerCluster']}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -491,10 +492,10 @@ elif selected_module == "Career Simulator & What-If Lab":
                 'JobInvolvement': 3, 'Attrition': 0, 'PercentSalaryHike': 14
             }
 
-        st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin: 12px 0 6px 0;'>Intervention Levers</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin: 12px 0 6px 0;'>Intervention Preset</div>", unsafe_allow_html=True)
         sim_action = st.radio(
-            "Talent Action Preset:",
-            ["Manual Customization", "Award Promotion", "Assign Lateral Role Rotation", "Enroll in Executive Training"]
+            "Preset Action:",
+            ["Manual Adjustments", "Award Promotion", "Assign Lateral Rotation", "Enroll in Leadership Training"]
         )
 
         if sim_action == "Award Promotion":
@@ -503,13 +504,13 @@ elif selected_module == "Career Simulator & What-If Lab":
             sim_job_level = min(int(baseline_dict.get('JobLevel', 1)) + 1, 5)
             sim_trainings = int(baseline_dict.get('TrainingTimesLastYear', 2)) + 1
             sim_salary_hike = int(baseline_dict.get('PercentSalaryHike', 15)) + 8
-        elif sim_action == "Assign Lateral Role Rotation":
+        elif sim_action == "Assign Lateral Rotation":
             sim_promo_years = int(baseline_dict.get('YearsSinceLastPromotion', 2))
             sim_role_years = 0
             sim_job_level = int(baseline_dict.get('JobLevel', 1))
             sim_trainings = int(baseline_dict.get('TrainingTimesLastYear', 2)) + 2
             sim_salary_hike = int(baseline_dict.get('PercentSalaryHike', 15))
-        elif sim_action == "Enroll in Executive Training":
+        elif sim_action == "Enroll in Leadership Training":
             sim_promo_years = int(baseline_dict.get('YearsSinceLastPromotion', 2))
             sim_role_years = int(baseline_dict.get('YearsInCurrentRole', 2))
             sim_job_level = int(baseline_dict.get('JobLevel', 1))
@@ -520,10 +521,10 @@ elif selected_module == "Career Simulator & What-If Lab":
             sim_role_years = st.slider("Years in Current Role", 0, 15, int(baseline_dict.get('YearsInCurrentRole', 2)))
             sim_trainings = st.slider("Training Programs Attended", 0, 6, int(baseline_dict.get('TrainingTimesLastYear', 2)))
             sim_job_level = st.slider("Job Level", 1, 5, int(baseline_dict.get('JobLevel', 1)))
-            sim_salary_hike = st.slider("Percent Salary Hike (%)", 0, 35, int(baseline_dict.get('PercentSalaryHike', 15)))
+            sim_salary_hike = st.slider("Salary Hike (%)", 0, 35, int(baseline_dict.get('PercentSalaryHike', 15)))
 
     with sim_col2:
-        st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Simulation Outcome & Trajectory Shift</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin-bottom: 8px;'>Projected Trajectory & Shift</div>", unsafe_allow_html=True)
         
         simulated_payload = {
             **baseline_dict,
@@ -547,27 +548,27 @@ elif selected_module == "Career Simulator & What-If Lab":
         r1, r2, r3 = st.columns(3)
         with r1:
             render_metric_card(
-                "Stagnation Risk Score",
+                "Stagnation Risk",
                 f"{new_risk:.1f}",
-                f"{risk_diff:+.1f} Shift from Baseline",
-                "#10B981" if new_risk < 35 else "#F43F5E"
+                f"{risk_diff:+.1f} vs Baseline",
+                "#34D399" if new_risk < 35 else "#FB7185"
             )
         with r2:
             render_metric_card(
-                "Predicted Archetype",
+                "Projected Cluster",
                 pred_res['CareerCluster'],
-                "Trajectory Classification",
-                "#0EA5E9"
+                "Trajectory",
+                "#38BDF8"
             )
         with r3:
             render_metric_card(
-                "Retention Priority",
+                "Opportunity Score",
                 f"{new_roi:.1f}",
-                "Workforce Index",
-                "#F59E0B"
+                "Retention Priority",
+                "#FBBF24"
             )
 
-        st.markdown("<div style='font-size: 0.95rem; font-weight: 600; color: #F8FAFC; margin: 16px 0 8px 0;'>Simulated State Relative to Enterprise Career Space</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.92rem; font-weight: 600; color: #F8FAFC; margin: 16px 0 8px 0;'>Position in Career Space</div>", unsafe_allow_html=True)
         fig_sim = px.scatter(
             df,
             x='PCA1',
@@ -584,14 +585,14 @@ elif selected_module == "Career Simulator & What-If Lab":
             y=[pred_res['PCA2']],
             mode='markers+text',
             name='Simulated State',
-            text=['Simulated Position'],
+            text=['Simulated'],
             textposition='top center',
-            marker=dict(size=14, color='#38BDF8', symbol='diamond', line=dict(width=2, color='#FFFFFF'))
+            marker=dict(size=12, color='#38BDF8', symbol='diamond', line=dict(width=2, color='#FFFFFF'))
         ))
 
         fig_sim.update_layout(
-            paper_bgcolor='#111827',
-            plot_bgcolor='#0B0F17',
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
             font=dict(color='#E2E8F0', family='Inter', size=11),
             legend=dict(orientation="h", y=-0.15, x=0.5, xanchor="center"),
             margin=dict(l=20, r=20, t=20, b=30)
@@ -604,9 +605,9 @@ elif selected_module == "Career Simulator & What-If Lab":
 # -------------------------------------------------------------
 elif selected_module == "Workforce Data Explorer":
     render_header(
-        title="Workforce Data Explorer & Export Center",
-        subtitle="Search, filter, inspect derived KPI attributes, and export custom enterprise subsets.",
-        tag="Data Center"
+        title="Workforce Data Explorer",
+        subtitle="Search, filter, inspect derived KPI attributes, and export custom dataset subsets.",
+        tag="Data Explorer"
     )
 
     search_query = st.text_input("Search records by Employee ID, Department, or Role:", "")
@@ -625,102 +626,11 @@ elif selected_module == "Workforce Data Explorer":
 
     csv_export = display_df.to_csv(index=False).encode('utf-8')
     st.download_button(
-        label="Export Filtered Workforce Dataset (CSV)",
+        label="Export Dataset (CSV)",
         data=csv_export,
         file_name="panw_career_intelligence_filtered.csv",
         mime="text/csv"
     )
 
 
-# -------------------------------------------------------------
-# MODULE 8: RESEARCH & EXECUTIVE BRIEF
-# -------------------------------------------------------------
-elif selected_module == "Research & Executive Brief":
-    render_header(
-        title="Research Documentation & Executive Policy Briefing",
-        subtitle="Formal academic research methodology, mathematical derivations, and C-suite/government policy recommendations.",
-        tag="Documentation"
-    )
-
-    doc_tab1, doc_tab2, doc_tab3 = st.tabs([
-        "Master Project Report (Complete)",
-        "Research Paper (Academic)",
-        "Executive Summary & Policy Brief"
-    ])
-
-    with doc_tab1:
-        pdf_proj_path = "reports/project_report.pdf"
-        if os.path.exists(pdf_proj_path):
-            with open(pdf_proj_path, "rb") as f:
-                st.download_button(
-                    label="Download Master Project Report (PDF)",
-                    data=f.read(),
-                    file_name="Palo_Alto_Networks_Master_Project_Report.pdf",
-                    mime="application/pdf"
-                )
-        st.markdown("<br/>", unsafe_allow_html=True)
-        proj_paths = [
-            os.path.join(os.path.dirname(__file__), "reports", "project_report.md"),
-            "reports/project_report.md",
-            os.path.join(os.path.dirname(__file__), "docs", "RESEARCH_PAPER.md")
-        ]
-        for p in proj_paths:
-            if os.path.exists(p):
-                with open(p, "r", encoding="utf-8") as f:
-                    st.markdown(f.read())
-                break
-
-    with doc_tab2:
-        pdf_rp_path = "reports/Research_Paper.pdf"
-        if os.path.exists(pdf_rp_path):
-            with open(pdf_rp_path, "rb") as f:
-                st.download_button(
-                    label="Download Official Research Paper (PDF)",
-                    data=f.read(),
-                    file_name="Palo_Alto_Networks_Career_Intelligence_Research_Paper.pdf",
-                    mime="application/pdf"
-                )
-        st.markdown("<br/>", unsafe_allow_html=True)
-        research_paths = [
-            os.path.join(os.path.dirname(__file__), "reports", "research_paper.md"),
-            os.path.join(os.path.dirname(__file__), "docs", "RESEARCH_PAPER.md"),
-            "reports/research_paper.md",
-            "docs/RESEARCH_PAPER.md"
-        ]
-        loaded_rp = False
-        for p in research_paths:
-            if os.path.exists(p):
-                with open(p, "r", encoding="utf-8") as f:
-                    st.markdown(f.read())
-                loaded_rp = True
-                break
-        if not loaded_rp:
-            st.info("Research paper document is available in reports/research_paper.md.")
-
-    with doc_tab3:
-        pdf_es_path = "reports/Executive_Summary.pdf"
-        if os.path.exists(pdf_es_path):
-            with open(pdf_es_path, "rb") as f:
-                st.download_button(
-                    label="Download Executive Summary & Policy Brief (PDF)",
-                    data=f.read(),
-                    file_name="Palo_Alto_Networks_Executive_Summary.pdf",
-                    mime="application/pdf"
-                )
-        st.markdown("<br/>", unsafe_allow_html=True)
-        exec_paths = [
-            os.path.join(os.path.dirname(__file__), "reports", "executive_summary.md"),
-            os.path.join(os.path.dirname(__file__), "docs", "EXECUTIVE_SUMMARY.md"),
-            "reports/executive_summary.md",
-            "docs/EXECUTIVE_SUMMARY.md"
-        ]
-        loaded_es = False
-        for p in exec_paths:
-            if os.path.exists(p):
-                with open(p, "r", encoding="utf-8") as f:
-                    st.markdown(f.read())
-                loaded_es = True
-                break
-        if not loaded_es:
-            st.info("Executive summary document is available in reports/executive_summary.md.")
 

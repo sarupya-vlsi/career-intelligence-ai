@@ -12,201 +12,159 @@ from typing import Dict, List, Any
 
 
 COLOR_PALETTE = {
-    'Fast-Track Performers': '#0EA5E9',       # Sky Cyan
-    'Stable Long-Term Contributors': '#6366F1', # Indigo
-    'Early-Career Explorers': '#10B981',       # Emerald
-    'Promotion-Stalled Employees': '#F59E0B',  # Amber
-    'High-Risk Stagnation Profiles': '#F43F5E',# Rose
-    'Primary': '#0EA5E9',
-    'Secondary': '#6366F1',
-    'Background': '#0B0F17',
-    'CardBg': '#111827',
-    'Border': '#1F2937',
-    'TextPrimary': '#F9FAFB',
-    'TextMuted': '#9CA3AF'
+    'Fast-Track Performers': '#38BDF8',       # Sky
+    'Stable Long-Term Contributors': '#818CF8', # Indigo
+    'Early-Career Explorers': '#34D399',       # Emerald
+    'Promotion-Stalled Employees': '#FBBF24',  # Amber
+    'High-Risk Stagnation Profiles': '#FB7185',# Rose
+    'Primary': '#38BDF8',
+    'Secondary': '#818CF8',
+    'Background': '#090D16',
+    'CardBg': '#111726',
+    'Border': 'rgba(255, 255, 255, 0.08)',
+    'TextPrimary': '#F8FAFC',
+    'TextMuted': '#94A3B8'
 }
 
 CUSTOM_CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 html, body, [class*="css"] {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: #E2E8F0;
     -webkit-font-smoothing: antialiased;
 }
 
-/* Background */
+/* Main background with subtle ambient lighting */
 .stApp {
-    background-color: #0B0F17;
-    background-image: radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.04) 0px, transparent 50%),
-                      radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.04) 0px, transparent 50%);
-}
-
-/* Top Navigation Bar / Brand Header */
-.brand-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 24px;
-    background: #111827;
-    border: 1px solid #1F2937;
-    border-radius: 8px;
-    margin-bottom: 24px;
-}
-
-.brand-title {
-    font-size: 1.15rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: #F8FAFC;
-    margin: 0;
-}
-
-.brand-subtitle {
-    font-size: 0.82rem;
-    color: #94A3B8;
-    margin-top: 3px;
-    margin-bottom: 0;
-}
-
-.brand-tag {
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #0EA5E9;
-    background: rgba(14, 165, 233, 0.1);
-    border: 1px solid rgba(14, 165, 233, 0.25);
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-family: 'JetBrains Mono', monospace;
+    background-color: #090D16;
+    background-image: 
+        radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 85% 90%, rgba(129, 140, 248, 0.04) 0%, transparent 40%);
 }
 
 /* Page Header */
 .page-header {
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #1F2937;
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .page-title {
-    font-size: 1.35rem;
-    font-weight: 700;
+    font-size: 1.32rem;
+    font-weight: 600;
     color: #F8FAFC;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.02em;
     margin: 0 0 4px 0;
 }
 
 .page-description {
-    font-size: 0.86rem;
+    font-size: 0.84rem;
     color: #94A3B8;
-    line-height: 1.4;
+    line-height: 1.45;
     margin: 0;
 }
 
-/* Enterprise Metric Cards */
+.brand-tag {
+    font-size: 0.70rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: #38BDF8;
+    background: rgba(56, 189, 248, 0.08);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    padding: 3px 10px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Metric Cards */
 div[data-testid="stColumn"] > div {
     height: 100%;
 }
 
 .enterprise-card {
-    background: #111827;
-    border: 1px solid #1F2937;
-    border-radius: 8px;
-    padding: 14px 16px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    height: 135px !important;
-    max-height: 135px !important;
+    background: #111726;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    padding: 16px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 130px !important;
+    max-height: 130px !important;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     box-sizing: border-box;
+    position: relative;
     overflow: hidden;
 }
 
 .enterprise-card:hover {
-    border-color: #374151;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    transform: translateY(-1px);
 }
 
 .metric-label {
     font-size: 0.72rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-weight: 500;
+    letter-spacing: 0.03em;
     color: #94A3B8;
     margin-bottom: 4px;
 }
 
 .metric-val {
     color: #F8FAFC;
-    letter-spacing: -0.02em;
-    margin-bottom: 4px;
+    letter-spacing: -0.03em;
+    margin-bottom: 2px;
     word-break: break-word;
 }
 
 .metric-meta {
-    font-size: 0.74rem;
+    font-size: 0.73rem;
     font-weight: 500;
-    color: #64748B;
     margin-top: auto;
-}
-
-/* Clean Chips & Status Tags */
-.chip {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-}
-
-.chip-blue {
-    background: rgba(14, 165, 233, 0.12);
-    color: #38BDF8;
-    border: 1px solid rgba(14, 165, 233, 0.25);
-}
-
-.chip-amber {
-    background: rgba(245, 158, 11, 0.12);
-    color: #FBBF24;
-    border: 1px solid rgba(245, 158, 11, 0.25);
-}
-
-.chip-red {
-    background: rgba(244, 63, 94, 0.12);
-    color: #FB7185;
-    border: 1px solid rgba(244, 63, 94, 0.25);
-}
-
-.chip-emerald {
-    background: rgba(16, 185, 129, 0.12);
-    color: #34D399;
-    border: 1px solid rgba(16, 185, 129, 0.25);
-}
-
-/* Sidebar Clean Styling */
-section[data-testid="stSidebar"] {
-    background-color: #0C1019 !important;
-    border-right: 1px solid #1F2937 !important;
-}
-
-/* Tab Headers */
-.stTabs [data-baseweb="tab-list"] {
+    display: flex;
+    align-items: center;
     gap: 4px;
-    background-color: #111827;
-    padding: 4px;
+}
+
+/* Sidebar Styling */
+section[data-testid="stSidebar"] {
+    background-color: #0B0F19 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stRadio"] label {
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: #94A3B8;
+    padding: 4px 6px;
     border-radius: 6px;
-    border: 1px solid #1F2937;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+section[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+    color: #F8FAFC;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* Tabs */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 6px;
+    background-color: #111726;
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .stTabs [data-baseweb="tab"] {
-    border-radius: 5px;
+    border-radius: 6px;
     color: #94A3B8;
     font-weight: 500;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     padding: 6px 14px;
 }
 
@@ -214,26 +172,35 @@ section[data-testid="stSidebar"] {
     background-color: #1E293B !important;
     color: #F8FAFC !important;
     font-weight: 600 !important;
-    border: 1px solid #334155 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 /* Dataframe Clean Styling */
 div[data-testid="stDataFrame"] {
-    border: 1px solid #1F2937;
-    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 8px;
     overflow: hidden;
+}
+
+/* Content Card Container */
+.content-box {
+    background: #111726;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
 }
 
 /* Custom Alert Banner */
 .custom-alert {
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid #1E293B;
-    border-left: 3px solid #0EA5E9;
-    border-radius: 6px;
+    background: rgba(17, 23, 38, 0.9);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-left: 3px solid #38BDF8;
+    border-radius: 8px;
     padding: 12px 16px;
-    font-size: 0.85rem;
+    font-size: 0.83rem;
     color: #CBD5E1;
-    line-height: 1.45;
+    line-height: 1.5;
     margin: 14px 0;
 }
 </style>
@@ -245,11 +212,11 @@ def apply_custom_css():
     st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
 
-def render_header(title: str, subtitle: str, tag: str = "Enterprise ML"):
+def render_header(title: str, subtitle: str, tag: str = "Analytics"):
     """Renders clean corporate page header."""
     st.markdown(f"""
     <div class="page-header">
-        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
             <div>
                 <h1 class="page-title">{title}</h1>
                 <p class="page-description">{subtitle}</p>
@@ -260,31 +227,34 @@ def render_header(title: str, subtitle: str, tag: str = "Enterprise ML"):
     """, unsafe_allow_html=True)
 
 
-def render_metric_card(title: str, value: str, meta: str = "", accent_color: str = "#0EA5E9"):
-    """Renders crisp enterprise KPI card with guaranteed equal height and adaptive typography."""
+def render_metric_card(title: str, value: str, meta: str = "", accent_color: str = "#38BDF8"):
+    """Renders crisp modern KPI card with adaptive typography and clean indicator."""
     val_str = str(value)
     if len(val_str) > 22:
         val_style = "font-size: 0.88rem; line-height: 1.25; font-weight: 600;"
     elif len(val_str) > 14:
-        val_style = "font-size: 0.98rem; line-height: 1.2; font-weight: 700;"
+        val_style = "font-size: 0.98rem; line-height: 1.2; font-weight: 600;"
     elif len(val_str) > 8:
-        val_style = "font-size: 1.25rem; line-height: 1.15; font-weight: 700;"
+        val_style = "font-size: 1.20rem; line-height: 1.15; font-weight: 600;"
     else:
-        val_style = "font-size: 1.55rem; line-height: 1.1; font-weight: 700;"
+        val_style = "font-size: 1.48rem; line-height: 1.1; font-weight: 600;"
 
     st.markdown(f"""
-    <div class="enterprise-card" style="border-top: 2px solid {accent_color};">
+    <div class="enterprise-card" style="box-shadow: inset 0 2px 0 {accent_color};">
         <div>
             <div class="metric-label">{title}</div>
             <div class="metric-val" style="{val_style}">{value}</div>
         </div>
-        <div class="metric-meta" style="color: {accent_color};">{meta}</div>
+        <div class="metric-meta" style="color: {accent_color};">
+            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:{accent_color};"></span>
+            {meta}
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
 
 def create_pca_scatter_plot(df: pd.DataFrame, is_3d: bool = False) -> go.Figure:
-    """Creates clean Plotly PCA cluster visualization."""
+    """Creates clean Plotly PCA cluster visualization with modern aesthetic."""
     color_map = {k: COLOR_PALETTE.get(k, '#94A3B8') for k in df['CareerCluster'].unique()}
     
     if is_3d:
@@ -306,13 +276,16 @@ def create_pca_scatter_plot(df: pd.DataFrame, is_3d: bool = False) -> go.Figure:
                 'PCA2': False,
                 'PCA3': False
             },
-            title="3D Principal Component Projection of Career Space"
+            title=""
         )
         fig.update_layout(
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='#E2E8F0', family='Inter', size=11),
             scene=dict(
-                xaxis=dict(backgroundcolor="#0B0F17", gridcolor="#1E293B", showbackground=True),
-                yaxis=dict(backgroundcolor="#0B0F17", gridcolor="#1E293B", showbackground=True),
-                zaxis=dict(backgroundcolor="#0B0F17", gridcolor="#1E293B", showbackground=True),
+                xaxis=dict(backgroundcolor="#0B0F19", gridcolor="rgba(255,255,255,0.06)", showbackground=True),
+                yaxis=dict(backgroundcolor="#0B0F19", gridcolor="rgba(255,255,255,0.06)", showbackground=True),
+                zaxis=dict(backgroundcolor="#0B0F19", gridcolor="rgba(255,255,255,0.06)", showbackground=True),
             ),
             margin=dict(l=0, r=0, b=0, t=10)
         )
@@ -337,27 +310,26 @@ def create_pca_scatter_plot(df: pd.DataFrame, is_3d: bool = False) -> go.Figure:
             },
             title=""
         )
-        fig.update_traces(marker=dict(size=7, opacity=0.85, line=dict(width=0.5, color='#0B0F17')))
-
-    fig.update_layout(
-        paper_bgcolor='#111827',
-        plot_bgcolor='#0B0F17',
-        font=dict(color='#E2E8F0', family='Inter', size=12),
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=-0.22,
-            xanchor="center",
-            x=0.5,
-            bgcolor='rgba(17, 24, 39, 0.9)',
-            bordercolor='#1F2937',
-            borderwidth=1,
-            font=dict(size=11)
-        ),
-        xaxis=dict(gridcolor='#1E293B', zerolinecolor='#334155'),
-        yaxis=dict(gridcolor='#1E293B', zerolinecolor='#334155'),
-        margin=dict(l=20, r=20, t=10, b=45)
-    )
+        fig.update_traces(marker=dict(size=7, opacity=0.85, line=dict(width=0.5, color='#090D16')))
+        fig.update_layout(
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='#E2E8F0', family='Inter', size=11),
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=-0.25,
+                xanchor="center",
+                x=0.5,
+                bgcolor='rgba(17, 23, 38, 0.8)',
+                bordercolor='rgba(255, 255, 255, 0.08)',
+                borderwidth=1,
+                font=dict(size=11)
+            ),
+            xaxis=dict(gridcolor='rgba(255,255,255,0.06)', zerolinecolor='rgba(255,255,255,0.1)'),
+            yaxis=dict(gridcolor='rgba(255,255,255,0.06)', zerolinecolor='rgba(255,255,255,0.1)'),
+            margin=dict(l=20, r=20, t=10, b=45)
+        )
     return fig
 
 
@@ -371,7 +343,7 @@ def create_radar_chart(radar_dict: Dict[str, List[float]]) -> go.Figure:
     fig = go.Figure()
     
     for arch, values in radar_dict.items():
-        color = COLOR_PALETTE.get(arch, '#0EA5E9')
+        color = COLOR_PALETTE.get(arch, '#38BDF8')
         r_vals = values + [values[0]]
         cat_vals = categories + [categories[0]]
         
@@ -380,8 +352,8 @@ def create_radar_chart(radar_dict: Dict[str, List[float]]) -> go.Figure:
             theta=cat_vals,
             fill='toself',
             name=arch,
-            line=dict(color=color, width=1.8),
-            opacity=0.45
+            line=dict(color=color, width=1.6),
+            opacity=0.35
         ))
 
     fig.update_layout(
@@ -390,25 +362,25 @@ def create_radar_chart(radar_dict: Dict[str, List[float]]) -> go.Figure:
                 visible=True,
                 range=[0, 100],
                 color='#64748B',
-                gridcolor='#1E293B',
-                linecolor='#1E293B'
+                gridcolor='rgba(255,255,255,0.06)',
+                linecolor='rgba(255,255,255,0.06)'
             ),
             angularaxis=dict(
                 color='#94A3B8',
-                gridcolor='#1E293B',
-                linecolor='#1E293B'
+                gridcolor='rgba(255,255,255,0.06)',
+                linecolor='rgba(255,255,255,0.06)'
             ),
-            bgcolor='#0B0F17'
+            bgcolor='rgba(0,0,0,0)'
         ),
-        paper_bgcolor='#111827',
+        paper_bgcolor='rgba(0,0,0,0)',
         font=dict(color='#E2E8F0', family='Inter', size=11),
         legend=dict(
             orientation="h",
             yanchor="bottom",
-            y=-0.22,
+            y=-0.25,
             xanchor="center",
             x=0.5,
-            bgcolor='#111827',
+            bgcolor='rgba(17, 23, 38, 0.8)',
             font=dict(size=10)
         ),
         margin=dict(l=35, r=35, b=50, t=20)
@@ -429,19 +401,18 @@ def create_stagnation_heatmap(df: pd.DataFrame) -> go.Figure:
         pivot,
         text_auto=True,
         aspect="auto",
-        color_continuous_scale='Blues',
-        title="Mean Promotion Stagnation Risk Score by Department & Role"
+        color_continuous_scale=[[0, '#0F172A'], [0.5, '#1E3A8A'], [1.0, '#38BDF8']],
+        title=""
     )
     fig.update_layout(
-        paper_bgcolor='#111827',
-        plot_bgcolor='#0B0F17',
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
         font=dict(color='#E2E8F0', family='Inter', size=11),
-        title_font=dict(size=13, color='#F8FAFC', family='Inter'),
         coloraxis_colorbar=dict(
-            title=dict(text="Risk (0-100)", font=dict(size=11, color='#94A3B8')),
+            title=dict(text="Risk Score", font=dict(size=11, color='#94A3B8')),
             tickfont=dict(size=10, color='#94A3B8')
         ),
-        margin=dict(l=20, r=20, t=40, b=20)
+        margin=dict(l=20, r=20, t=20, b=20)
     )
     return fig
 
@@ -453,34 +424,32 @@ def create_manager_impact_chart(mgr_df: pd.DataFrame) -> go.Figure:
     fig.add_trace(go.Bar(
         x=mgr_df['ManagerTenureBin'].astype(str),
         y=mgr_df['AvgPromoRiskScore'],
-        name='Avg Promotion Risk Score',
-        marker_color='#3B82F6',
+        name='Avg Risk Score',
+        marker_color='#6366F1',
         opacity=0.85
     ))
 
     fig.add_trace(go.Scatter(
         x=mgr_df['ManagerTenureBin'].astype(str),
         y=mgr_df['AvgYearsSincePromo'],
-        name='Avg Years Without Promotion',
+        name='Years Since Promotion',
         yaxis='y2',
         mode='lines+markers',
-        line=dict(color='#0EA5E9', width=2.5),
-        marker=dict(size=7, color='#0EA5E9')
+        line=dict(color='#38BDF8', width=2),
+        marker=dict(size=6, color='#38BDF8')
     ))
 
     fig.update_layout(
-        title="Manager Continuity vs Promotion Latency and Risk",
-        paper_bgcolor='#111827',
-        plot_bgcolor='#0B0F17',
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
         font=dict(color='#E2E8F0', family='Inter', size=11),
-        title_font=dict(size=13, color='#F8FAFC', family='Inter'),
-        xaxis=dict(gridcolor='#1E293B'),
+        xaxis=dict(gridcolor='rgba(255,255,255,0.06)'),
         yaxis=dict(
             title=dict(text="Promotion Risk Score", font=dict(size=11, color='#94A3B8')),
-            gridcolor='#1E293B'
+            gridcolor='rgba(255,255,255,0.06)'
         ),
         yaxis2=dict(
-            title=dict(text="Years Without Promotion", font=dict(size=11, color='#0EA5E9')),
+            title=dict(text="Years Without Promotion", font=dict(size=11, color='#38BDF8')),
             overlaying='y',
             side='right',
             gridcolor='rgba(0,0,0,0)'
@@ -491,9 +460,10 @@ def create_manager_impact_chart(mgr_df: pd.DataFrame) -> go.Figure:
             y=1.02,
             xanchor="right",
             x=1,
-            bgcolor='#111827',
+            bgcolor='rgba(17, 23, 38, 0.8)',
             font=dict(size=11)
         ),
-        margin=dict(l=20, r=20, t=40, b=20)
+        margin=dict(l=20, r=20, t=30, b=20)
     )
     return fig
+

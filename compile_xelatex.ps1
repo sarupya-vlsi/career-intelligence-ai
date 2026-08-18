@@ -7,27 +7,32 @@
 $ErrorActionPreference = "Stop"
 
 Write-Host "======================================================================" -ForegroundColor Cyan
-Write-Host "XeLaTeX Academic Project Report Compiler" -ForegroundColor Cyan
+Write-Host "XeLaTeX Academic Research Paper & Technical Report Compiler" -ForegroundColor Cyan
 Write-Host "======================================================================" -ForegroundColor Cyan
 
-# 1. Detect target .tex file
-$TexFiles = Get-ChildItem -Path . -Filter "PROJECT_REPORT.tex"
-if ($TexFiles.Count -eq 0) {
-    $TexFiles = Get-ChildItem -Path "./reports" -Filter "PROJECT_REPORT.tex"
-}
-if ($TexFiles.Count -eq 0) {
-    $TexFiles = Get-ChildItem -Path . -Filter "*.tex"
-}
-if ($TexFiles.Count -eq 0) {
-    $TexFiles = Get-ChildItem -Path "./reports" -Filter "*.tex"
+$ScriptRoot = $PSScriptRoot
+if (-not $ScriptRoot) {
+    $ScriptRoot = (Get-Location).Path
 }
 
-if ($TexFiles.Count -eq 0) {
-    Write-Error "No .tex file found in root or reports/ directory."
+# 1. Detect target .tex file (Prioritize reports/RESEARCH_PAPER.tex, then root)
+$TargetTex = $null
+if (Test-Path "$ScriptRoot\reports\RESEARCH_PAPER.tex") {
+    $TargetTex = "$ScriptRoot\reports\RESEARCH_PAPER.tex"
+} elseif (Test-Path "$ScriptRoot\RESEARCH_PAPER.tex") {
+    $TargetTex = "$ScriptRoot\RESEARCH_PAPER.tex"
+} else {
+    $found = Get-ChildItem -Path $ScriptRoot -Recurse -Filter "*.tex" | Where-Object { $_.FullName -notmatch "\\.git" }
+    if ($found.Count -gt 0) {
+        $TargetTex = $found[0].FullName
+    }
+}
+
+if (-not $TargetTex -or -not (Test-Path $TargetTex)) {
+    Write-Error "No .tex file found in workspace."
     exit 1
 }
 
-$TargetTex = $TexFiles[0].FullName
 $TexBaseName = [System.IO.Path]::GetFileNameWithoutExtension($TargetTex)
 $WorkingDir = [System.IO.Path]::GetDirectoryName($TargetTex)
 
@@ -42,7 +47,7 @@ function Clean-AuxiliaryFiles {
         ".bbl", ".blg", ".synctex.gz", ".fls", ".fdb_latexmk",
         ".nav", ".snm", ".vrb", ".dvi", ".xdv", ".fmt"
     )
-    $DirsToCheck = @($Dir, ".", "./reports") | Select-Object -Unique
+    $DirsToCheck = @($Dir, $ScriptRoot, "$ScriptRoot\reports") | Select-Object -Unique
     foreach ($d in $DirsToCheck) {
         if (Test-Path $d) {
             foreach ($ext in $AuxExtensions) {
@@ -104,35 +109,25 @@ try {
             
             Write-Host "`n[Pass 2/2] Resolving cross-references, TOC, and dynamic counters..." -ForegroundColor Green
             & xelatex -interaction=nonstopmode -synctex=1 $TargetTex
-
-            # Mirror to reports folder if compiled in root, and vice-versa
-            if ($WorkingDir -eq (Get-Location).Path) {
-                if (Test-Path "reports") {
-                    Copy-Item $TargetPdf "reports/PROJECT_REPORT.pdf" -Force -ErrorAction SilentlyContinue
-                    Copy-Item $TargetPdf "reports/Career_Intelligence_Project_Report.pdf" -Force -ErrorAction SilentlyContinue
-                }
-            }
-
-            Write-Host "`nCompilation Successful with XeLaTeX!" -ForegroundColor Green
-            Write-Host "Output PDF: $TargetPdf" -ForegroundColor Cyan
-        } catch {
-            Write-Warning "XeLaTeX encountered an error: $_"
-            Write-Host "Generating publication-grade PDF via Universal PDF Engine..." -ForegroundColor Yellow
-            python scratch/build_report_pdf.py
         } finally {
             Pop-Location
         }
-    } else {
-        Write-Warning "xelatex executable not detected in current PATH."
-        Write-Host "Generating publication-grade PDF adhering strictly to Universal XeLaTeX Guide..." -ForegroundColor Yellow
-        if (Test-Path "scratch/build_report_pdf.py") {
-            python scratch/build_report_pdf.py
-            Write-Host "`nCompilation Successful via Universal PDF Engine!" -ForegroundColor Green
-            Write-Host "Output PDF: $TargetPdf" -ForegroundColor Cyan
-        } else {
-            Write-Error "scratch/build_report_pdf.py not found."
-            exit 1
+
+        # Mirror PDF between root and reports/
+        $RootPdf = Join-Path $ScriptRoot "RESEARCH_PAPER.pdf"
+        $ReportsPdf = Join-Path $ScriptRoot "reports\RESEARCH_PAPER.pdf"
+        
+        if (Test-Path $ReportsPdf) {
+            Copy-Item $ReportsPdf $RootPdf -Force -ErrorAction SilentlyContinue
+        } elseif (Test-Path $RootPdf) {
+            Copy-Item $RootPdf $ReportsPdf -Force -ErrorAction SilentlyContinue
         }
+
+        Write-Host "`nCompilation Successful with XeLaTeX!" -ForegroundColor Green
+        Write-Host "Output PDF: $TargetPdf" -ForegroundColor Cyan
+    } else {
+        Write-Error "xelatex executable not detected in current PATH or standard locations."
+        exit 1
     }
 } finally {
     # 6. ALWAYS clean up auxiliary and intermediate files after compilation

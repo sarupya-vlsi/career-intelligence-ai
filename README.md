@@ -3,12 +3,13 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-0EA5E9.svg)](https://www.python.org/)
 [![Framework](https://img.shields.io/badge/Framework-Streamlit-6366F1.svg)](https://streamlit.io/)
 [![Machine Learning](https://img.shields.io/badge/ML-Unsupervised%20Clustering-10B981.svg)](https://scikit-learn.org/)
-[![XeLaTeX Report](https://img.shields.io/badge/Report-XeLaTeX%20Publication-9333EA.svg)](reports/PROJECT_REPORT.pdf)
+[![XeLaTeX Research Paper](https://img.shields.io/badge/Paper-XeLaTeX%20Publication-9333EA.svg)](reports/RESEARCH_PAPER.pdf)
 [![License](https://img.shields.io/badge/License-MIT-64748B.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-0EA5E9.svg)]()
 
 > **Proactive Career-Centric Workforce Management vs Reactive Attrition Prediction**  
-> An end-to-end Machine Learning and Decision Intelligence platform uncovering promotion velocity gaps, role stagnation patterns, and actionable retention opportunities before voluntary employee turnover occurs.
+> An end-to-end Machine Learning and Decision Intelligence platform uncovering promotion velocity gaps, role stagnation patterns, and actionable retention opportunities before voluntary employee turnover occurs.  
+> **Author:** Sarupya Guha (Intern ID: `UMID150826105831`, Unified Mentor)
 
 ---
 
@@ -132,9 +133,9 @@ Open **http://localhost:8501** in your browser.
 
 ---
 
-## Compiling the Academic Project Report (XeLaTeX & PDF)
+## Compiling the Academic Research Paper (XeLaTeX & PDF)
 
-This project includes a **formal academic internship report** strictly adhering to university report construction standards (Times New Roman, 1.2 line height, uniform 0.8in margins, full-grid tables, zero footer branding, and purple bracketed literature citations).
+This project includes a **formal academic research paper** strictly adhering to university report construction standards (Times New Roman, 1.16 line height, uniform 0.8in margins, full-grid tables, zero footer branding, purple bracketed literature citations, and a strict 11-12 page budget without image bloat).
 
 ### Compile with Automated PowerShell Script:
 ```powershell
@@ -142,11 +143,11 @@ powershell -ExecutionPolicy Bypass -File .\compile_xelatex.ps1
 ```
 
 The compiler script:
-- Automatically detects the primary `.tex` source (`PROJECT_REPORT.tex`).
+- Automatically detects the primary `.tex` source ([`reports/RESEARCH_PAPER.tex`](reports/RESEARCH_PAPER.tex)).
 - Configures MiKTeX automatic package management on the fly.
-- Executes two passes of `xelatex -interaction=nonstopmode -synctex=1` to resolve cross-references, TOC, List of Tables, and List of Figures.
+- Executes two passes of `xelatex -interaction=nonstopmode -synctex=1` to resolve cross-references, equations, and tables.
 - **Automatically cleans up all auxiliary files** (`.aux`, `.log`, `.toc`, `.out`, `.lot`, `.lof`, `.synctex.gz`) after compilation to keep the workspace clean.
-- Generates publication-ready PDF: [`PROJECT_REPORT.pdf`](PROJECT_REPORT.pdf) and [`reports/PROJECT_REPORT.pdf`](reports/PROJECT_REPORT.pdf).
+- Generates publication-ready PDF: [`reports/RESEARCH_PAPER.pdf`](reports/RESEARCH_PAPER.pdf) and [`RESEARCH_PAPER.pdf`](RESEARCH_PAPER.pdf).
 
 ---
 
@@ -159,9 +160,7 @@ The compiler script:
 │   └── processed/
 │       └── panw_engineered_features.csv   # Feature-engineered workforce dataset
 ├── docs/
-│   ├── RESEARCH_PAPER.md                  # Comprehensive academic/industry research paper
-│   ├── EXECUTIVE_SUMMARY.md               # C-Suite & government stakeholder briefing
-│   └── METHODOLOGY_GUIDE.md               # Mathematical & algorithmic implementation guide
+│   └── RESEARCH_PAPER.md                  # Comprehensive academic research paper
 ├── images/
 │   ├── system_architecture.png            # End-to-end pipeline diagram
 │   ├── pca_archetype_clusters.png         # 2D PCA projection of 5 archetypes
@@ -173,9 +172,8 @@ The compiler script:
 ├── notebooks/
 │   └── 01_exploratory_data_analysis_and_clustering.ipynb  # Interactive EDA & ML Notebook
 ├── reports/
-│   ├── PROJECT_REPORT.tex                 # XeLaTeX master project report source
-│   ├── PROJECT_REPORT.pdf                 # Compiled academic publication PDF (26 pages)
-│   ├── Career_Intelligence_Project_Report.pdf # Named academic report PDF
+│   ├── RESEARCH_PAPER.tex                 # XeLaTeX master research paper source
+│   ├── RESEARCH_PAPER.pdf                 # Compiled academic publication PDF (11 pages)
 │   └── biraj-xelatex-universal-report_build-guide.md # Universal construction guide
 ├── src/
 │   ├── __init__.py
@@ -191,8 +189,7 @@ The compiler script:
 ├── LICENSE                                # MIT License
 ├── requirements.txt                       # Python dependencies
 ├── compile_xelatex.ps1                    # Automated double-pass compiler with cleanup
-├── PROJECT_REPORT.tex                     # Master LaTeX source
-├── PROJECT_REPORT.pdf                     # Compiled master PDF
+├── RESEARCH_PAPER.pdf                     # Compiled master research paper PDF
 ├── app.py                                 # Streamlit 8-module decision intelligence cockpit
 └── README.md                              # Complete repository documentation
 ```
