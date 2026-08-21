@@ -1,8 +1,8 @@
 # ====================================================================
-# Git Ignore Configuration: Career Intelligence & Retention ML Platform
+# Git Ignore Configuration
 # ====================================================================
 
-# Byte-compiled / optimized / DLL files
+# Python bytecode & cache
 __pycache__/
 */__pycache__/*
 *.py[cod]
@@ -28,7 +28,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# Virtual environments & secrets
+# Virtual environments
 venv/
 env/
 ENV/
@@ -39,12 +39,12 @@ venv.bak/
 .env.*
 .streamlit/secrets.toml
 
-# Jupyter Notebook & IPython checkpoints
+# Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 */.ipynb_checkpoints/*
 .ipython/
 
-# Unit test, linting & coverage artifacts
+# Unit tests, linting & coverage
 .tox/
 .coverage
 .coverage.*

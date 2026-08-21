@@ -1,6 +1,6 @@
 """
-Machine Learning Pipeline & Career Intelligence Modeling Module
-Career Path Clustering, Dimensionality Reduction, Archetype Mapping, and Simulation
+Machine learning pipeline for workforce clustering and dimensionality reduction.
+Uses K-Means clustering (validated with Hierarchical clustering and PCA).
 """
 
 import numpy as np
@@ -31,39 +31,39 @@ ARCHETYPE_DESCRIPTIONS = {
     'Fast-Track Performers': {
         'badge': 'Fast-Track Performer',
         'color': '#0EA5E9',
-        'summary': 'Rapid career velocity, frequent role progression, and low promotion stagnation.',
-        'strategy': 'Provide high-visibility strategic projects, executive sponsorship, and accelerated leadership pathways.'
+        'summary': 'Rapid career growth, frequent role changes, and low promotion delays.',
+        'strategy': 'Provide high-visibility projects and leadership opportunities.'
     },
     'Stable Long-Term Contributors': {
         'badge': 'Stable Long-Term Contributor',
         'color': '#6366F1',
-        'summary': 'Deep institutional knowledge, long organizational tenure, and high enterprise stability.',
-        'strategy': 'Leverage for organizational mentorship, technical leadership, and continuous recognition.'
+        'summary': 'High organizational tenure, solid domain expertise, and high retention stability.',
+        'strategy': 'Involve in mentorship programs and subject matter expert tracks.'
     },
     'Early-Career Explorers': {
         'badge': 'Early-Career Explorer',
         'color': '#10B981',
-        'summary': 'Early organizational tenure, agile training participation, and foundational skill development.',
-        'strategy': 'Structure clear 18-month career progression milestones, rotational exposure, and dedicated mentorship.'
+        'summary': 'Lower company tenure, building foundational skills and looking for clear growth milestones.',
+        'strategy': 'Set up structured 1-to-2 year progression milestones and mentorship.'
     },
     'Promotion-Stalled Employees': {
         'badge': 'Promotion-Stalled Employee',
         'color': '#F59E0B',
-        'summary': 'Moderate-to-high tenure with extended gaps since last promotion despite solid performance.',
-        'strategy': 'Conduct urgent compensation & title review, establish immediate promotion milestone plans.'
+        'summary': 'Solid performers with 3+ years since their last promotion facing progression bottlenecks.',
+        'strategy': 'Prioritize for promotion review, role scope expansion, or compensation adjustment.'
     },
     'High-Risk Stagnation Profiles': {
         'badge': 'High-Risk Stagnation Profile',
         'color': '#F43F5E',
-        'summary': 'Severe role stagnation and prolonged manager continuity without upward or lateral movement.',
-        'strategy': 'Immediate talent intervention: lateral departmental rotation, manager realignment, or specialized re-skilling.'
+        'summary': 'Long role tenure and prolonged manager continuity without upward or lateral movement.',
+        'strategy': 'Consider lateral role rotation, manager change, or re-skilling.'
     }
 }
 
 
 class CareerIntelligenceModel:
     """
-    End-to-End Unsupervised Machine Learning Model for Workforce Career Intelligence.
+    K-Means clustering and PCA projection model for workforce segmentation.
     """
     def __init__(self, n_clusters: int = 5, random_state: int = 42):
         self.n_clusters = n_clusters
@@ -80,27 +80,23 @@ class CareerIntelligenceModel:
 
     def fit_transform_dataset(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        Fits clustering models on feature-engineered dataset and attaches:
-        - ClusterID (0 to K-1)
-        - CareerCluster (Human-readable Archetype)
-        - HierarchicalClusterID (Validation benchmark)
-        - PCA1, PCA2, PCA3 (Visual projections)
+        Fits clustering models on feature data and returns DataFrame with cluster labels and PCA coordinates.
         """
         data = df.copy()
         X = data[self.feature_names].values
 
-        # Scale features
+        # Feature scaling
         X_scaled = self.scaler.fit_transform(X)
 
         # Fit K-Means
         kmeans_labels = self.kmeans.fit_predict(X_scaled)
         data['ClusterID'] = kmeans_labels
 
-        # Fit Hierarchical for validation
+        # Fit Hierarchical clustering as a comparison baseline
         hierarchical_labels = self.hierarchical.fit_predict(X_scaled)
         data['HierarchicalClusterID'] = hierarchical_labels
 
-        # Dimensionality Reduction
+        # Compute 2D and 3D PCA coordinates for plotting
         pca_2d_coords = self.pca_2d.fit_transform(X_scaled)
         data['PCA1'] = pca_2d_coords[:, 0].round(3)
         data['PCA2'] = pca_2d_coords[:, 1].round(3)
@@ -108,7 +104,7 @@ class CareerIntelligenceModel:
         pca_3d_coords = self.pca_3d.fit_transform(X_scaled)
         data['PCA3'] = pca_3d_coords[:, 2].round(3)
 
-        # Compute Clustering Metrics
+        # Record validation metrics
         self.metrics = {
             'silhouette_kmeans': float(silhouette_score(X_scaled, kmeans_labels)),
             'silhouette_hierarchical': float(silhouette_score(X_scaled, hierarchical_labels)),
@@ -118,7 +114,7 @@ class CareerIntelligenceModel:
             'pca_3d_variance': float(np.sum(self.pca_3d.explained_variance_ratio_))
         }
 
-        # Dynamically map cluster centroids to business archetypes
+        # Map cluster IDs to descriptive archetypes
         self.cluster_to_archetype_map = self._map_archetypes(data)
         data['CareerCluster'] = data['ClusterID'].map(self.cluster_to_archetype_map)
 
@@ -127,34 +123,34 @@ class CareerIntelligenceModel:
 
     def _map_archetypes(self, df: pd.DataFrame) -> Dict[int, str]:
         """
-        Analyzes cluster centroids across key dimensions to reliably assign standard archetypes.
+        Assigns intuitive archetype names based on the centroid properties of each cluster.
         """
         cluster_means = df.groupby('ClusterID')[self.feature_names + ['PromotionGapRiskScore']].mean()
         assigned_map = {}
         unassigned_clusters = list(range(self.n_clusters))
         
-        # 1. Early-Career Explorers: Lowest YearsAtCompany / Lowest TotalWorkingYears
+        # 1. Early-Career: lowest company tenure
         early_cluster = cluster_means.loc[unassigned_clusters, 'YearsAtCompany'].idxmin()
         assigned_map[early_cluster] = 'Early-Career Explorers'
         unassigned_clusters.remove(early_cluster)
 
-        # 2. Stable Long-Term Contributors: Highest TotalWorkingYears and Highest YearsAtCompany
+        # 2. Stable Long-Term: highest working years and company tenure
         veteran_cluster = cluster_means.loc[unassigned_clusters, 'TotalWorkingYears'].idxmax()
         assigned_map[veteran_cluster] = 'Stable Long-Term Contributors'
         unassigned_clusters.remove(veteran_cluster)
 
-        # 3. High-Risk Stagnation Profiles: Highest RoleStagnationIndex among remaining
+        # 3. High-Risk Stagnation: highest role stagnation index
         stagnant_cluster = cluster_means.loc[unassigned_clusters, 'RoleStagnationIndex'].idxmax()
         assigned_map[stagnant_cluster] = 'High-Risk Stagnation Profiles'
         unassigned_clusters.remove(stagnant_cluster)
 
-        # 4. Promotion-Stalled Employees: Highest YearsSinceLastPromotion or PromotionGapRatio among remaining
+        # 4. Promotion-Stalled: highest years since last promotion
         if unassigned_clusters:
             stalled_cluster = cluster_means.loc[unassigned_clusters, 'YearsSinceLastPromotion'].idxmax()
             assigned_map[stalled_cluster] = 'Promotion-Stalled Employees'
             unassigned_clusters.remove(stalled_cluster)
 
-        # 5. Fast-Track Performers: Remaining cluster(s) with high career velocity / promotion frequency
+        # 5. Fast-Track: remaining cluster with frequent promotions
         for rem in unassigned_clusters:
             assigned_map[rem] = 'Fast-Track Performers'
 
@@ -162,12 +158,11 @@ class CareerIntelligenceModel:
 
     def predict_single(self, feature_dict: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Predicts cluster archetype and calculates risk scores for an individual employee profile.
+        Predicts cluster assignment and calculates scores for an individual employee record.
         """
         if not self.is_fitted:
-            raise RuntimeError("Model is not fitted yet. Fit with dataset first.")
+            raise RuntimeError("Model has not been fitted yet. Please run fit_transform_dataset first.")
 
-        # Compute engineered features
         years_at_co = float(feature_dict.get('YearsAtCompany', 1))
         years_in_role = float(feature_dict.get('YearsInCurrentRole', 1))
         years_since_promo = float(feature_dict.get('YearsSinceLastPromotion', 0))
@@ -186,7 +181,6 @@ class CareerIntelligenceModel:
         mgr_stability = years_with_mgr / (years_in_role + 1.0)
         career_velocity = job_level / (total_working + 1.0)
 
-        # Vector
         vec = np.array([[
             total_working, years_at_co, years_in_role, years_since_promo,
             years_with_mgr, job_level, promo_gap_ratio, role_stagnation_idx,
@@ -198,26 +192,27 @@ class CareerIntelligenceModel:
         archetype = self.cluster_to_archetype_map.get(cluster_id, 'Fast-Track Performers')
         pca_coords = self.pca_2d.transform(scaled_vec)[0]
 
-        # Stagnation Risk Score
-        p_weight = min(years_since_promo / 10.0, 1.0) * 35.0
-        r_weight = min(role_stagnation_idx, 1.0) * 25.0
-        t_weight = min(years_in_role / 8.0, 1.0) * 25.0
-        s_drag = (1.0 - (job_sat / 4.0)) * 15.0
-        promo_risk_score = round(min(max(p_weight + r_weight + t_weight + s_drag, 0.0), 100.0), 1)
+        # Calculate scores
+        promo_years_weight = np.clip(years_since_promo / 10.0, 0, 1.0) * 35.0
+        role_stagnation_weight = np.clip(role_stagnation_idx, 0, 1.0) * 25.0
+        tenure_stagnation_weight = np.clip(years_in_role / 8.0, 0, 1.0) * 25.0
+        satisfaction_drag = (1.0 - (job_sat / 4.0)) * 15.0
+        pgrs = round(float(np.clip(promo_years_weight + role_stagnation_weight + tenure_stagnation_weight + satisfaction_drag, 0, 100)), 1)
 
-        # Retention Opportunity Index (ROI)
         active_bonus = (1 - attrition) * 25.0
-        p_factor = (perf_rating / 4.0) * 25.0
+        perf_factor = (perf_rating / 4.0) * 25.0
         involvement_factor = (float(feature_dict.get('JobInvolvement', 3)) / 4.0) * 15.0
-        stagnation_urgency = (promo_risk_score / 100.0) * 35.0
-        roi_score = round(min(max(active_bonus + p_factor + involvement_factor + stagnation_urgency, 0.0), 100.0), 1)
+        stagnation_urgency = (pgrs / 100.0) * 35.0
+        roi = round(float(np.clip(active_bonus + perf_factor + involvement_factor + stagnation_urgency, 0, 100)), 1)
 
         return {
             'ClusterID': cluster_id,
             'CareerCluster': archetype,
-            'PromotionGapRiskScore': promo_risk_score,
-            'RetentionOpportunityIndex': roi_score,
             'PCA1': float(pca_coords[0]),
             'PCA2': float(pca_coords[1]),
-            'ArchetypeInfo': ARCHETYPE_DESCRIPTIONS.get(archetype, {})
+            'PromotionGapRiskScore': pgrs,
+            'RetentionOpportunityIndex': roi,
+            'PromotionGapRatio': round(promo_gap_ratio, 3),
+            'RoleStagnationIndex': round(role_stagnation_idx, 3),
+            'CareerVelocity': round(career_velocity, 3)
         }

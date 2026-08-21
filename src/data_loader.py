@@ -1,6 +1,6 @@
 """
-Data Loader & Feature Engineering Module
-Career Intelligence Platform for Palo Alto Networks
+Data loading and feature engineering module.
+Calculates career velocity, promotion gap ratios, and stagnation metrics.
 """
 
 import os
@@ -21,9 +21,7 @@ EXPECTED_COLUMNS = [
 
 
 def load_raw_data(file_path: str = None) -> pd.DataFrame:
-    """
-    Loads raw HR dataset from local path or standard directory structure.
-    """
+    """Loads the raw HR dataset from disk."""
     if file_path is None or not os.path.exists(file_path):
         candidate_paths = [
             "data/raw/Palo Alto Networks(1).csv",
@@ -39,10 +37,11 @@ def load_raw_data(file_path: str = None) -> pd.DataFrame:
                 break
     
     if not file_path or not os.path.exists(file_path):
-        raise FileNotFoundError("Could not locate 'Palo Alto Networks(1).csv'. Please provide a valid path.")
+        raise FileNotFoundError("Could not locate dataset 'Palo Alto Networks(1).csv'. Please check the file path.")
 
     df = pd.read_csv(file_path)
-    # Ensure EmployeeID column exists for indexing and individual simulation
+    
+    # Assign employee ID if missing
     if 'EmployeeID' not in df.columns:
         df.insert(0, 'EmployeeID', [f"PANW-{1000 + i}" for i in range(len(df))])
     
@@ -51,23 +50,14 @@ def load_raw_data(file_path: str = None) -> pd.DataFrame:
 
 def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Transforms raw HR attributes into high-dimensional Career Intelligence KPIs:
-    - Promotion Gap Ratio
-    - Role Stagnation Index
-    - Training Intensity Score
-    - Manager Stability Indicator
-    - Career Velocity
-    - Promotion Gap Risk Score (0-100) & Risk Level
-    - Retention Opportunity Index (ROI) & Priority
-    - Training Need Indicator
-    - Manager Stability Impact
+    Computes career progression, stagnation, and retention opportunity indicators.
     """
     data = df.copy()
 
-    # Numerical smoothing constant
+    # Small constant to prevent zero-division
     EPSILON = 1.0
 
-    # 1. Primary Required Derived Metrics
+    # 1. Career velocity and stagnation ratios
     data['PromotionGapRatio'] = (data['YearsSinceLastPromotion'] / (data['YearsAtCompany'] + EPSILON)).round(3)
     data['RoleStagnationIndex'] = (data['YearsInCurrentRole'] / (data['YearsAtCompany'] + EPSILON)).round(3)
     data['TrainingIntensityScore'] = (data['TrainingTimesLastYear'] / (data['YearsAtCompany'] + EPSILON)).round(3)
@@ -75,19 +65,20 @@ def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
     data['ManagerTenureRatio'] = (data['YearsWithCurrManager'] / (data['YearsAtCompany'] + EPSILON)).round(3)
     data['RolePromoGapDiff'] = (data['YearsInCurrentRole'] - data['YearsSinceLastPromotion'])
 
-    # 2. Career Progression & Compensation Relative Velocity
+    # 2. Career velocity (advancement per total experience)
     data['CareerVelocity'] = (data['JobLevel'] / (data['TotalWorkingYears'] + EPSILON)).round(3)
     
+    # Income compared to average for the role
     role_avg_income = data.groupby('JobRole')['MonthlyIncome'].transform('mean')
     data['CompRatioToRoleAvg'] = (data['MonthlyIncome'] / role_avg_income).round(2)
 
-    # 3. Overall Experience Satisfaction Index (Average of 4 rating dimensions)
+    # 3. Overall satisfaction average
     data['OverallSatisfaction'] = (
         (data['EnvironmentSatisfaction'] + data['JobSatisfaction'] + 
          data['RelationshipSatisfaction'] + data['WorkLifeBalance']) / 4.0
     ).round(2)
 
-    # 4. Career Stage Categorization
+    # 4. Tenure career stages
     def get_career_stage(years):
         if years <= 2:
             return 'Early Stage (0-2 yrs)'
@@ -100,8 +91,7 @@ def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
     
     data['CareerStage'] = data['YearsAtCompany'].apply(get_career_stage)
 
-    # 5. Composite Promotion Gap Risk Score (0 to 100 continuous score)
-    # Stagnation signals: high promo gap years, high role stagnation, low satisfaction, high tenure without progression
+    # 5. Composite Promotion Gap Risk Score (0-100)
     promo_years_weight = np.clip(data['YearsSinceLastPromotion'] / 10.0, 0, 1.0) * 35.0
     role_stagnation_weight = np.clip(data['RoleStagnationIndex'], 0, 1.0) * 25.0
     tenure_stagnation_weight = np.clip(data['YearsInCurrentRole'] / 8.0, 0, 1.0) * 25.0
@@ -120,9 +110,8 @@ def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
 
     data['PromotionGapRiskLevel'] = data['PromotionGapRiskScore'].apply(categorize_promo_risk)
 
-    # 6. Retention Opportunity Index (ROI) (0 to 100 continuous score)
-    # Goal: Pinpoint non-attrited (active) high performers who are facing career stagnation,
-    # enabling proactive talent interventions before disengagement/attrition occurs.
+    # 6. Retention Opportunity Index (0-100)
+    # Highlights active high performers who are facing promotion delays
     active_bonus = (1 - data['Attrition']) * 25.0
     perf_factor = (data['PerformanceRating'] / 4.0) * 25.0
     involvement_factor = (data['JobInvolvement'] / 4.0) * 15.0
@@ -145,7 +134,7 @@ def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
         categorize_roi(r, a) for r, a in zip(data['RetentionOpportunityIndex'], data['Attrition'])
     ]
 
-    # 7. Training Need Indicator
+    # 7. Training need classification
     def get_training_need(row):
         if row['TrainingTimesLastYear'] <= 1 and row['PromotionGapRiskScore'] >= 40:
             return 'High Development Need'
@@ -156,7 +145,7 @@ def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
 
     data['TrainingNeedIndicator'] = data.apply(get_training_need, axis=1)
 
-    # 8. Manager Stability Impact
+    # 8. Manager continuity impact
     def get_manager_impact(row):
         if row['YearsWithCurrManager'] >= 5 and row['YearsSinceLastPromotion'] >= 4:
             return 'Prolonged Stagnant Manager Dyad'
@@ -169,20 +158,20 @@ def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
 
     data['ManagerStabilityImpact'] = data.apply(get_manager_impact, axis=1)
 
-    # 9. Prescriptive Next Best Action
+    # 9. Practical suggested action
     def generate_prescriptive_action(row):
         if row['Attrition'] == 1:
             return "Exit Analysis & Knowledge Transfer"
         elif row['PromotionGapRiskScore'] >= 60 and row['PerformanceRating'] >= 3:
-            return "Fast-Track Promotion Review & Compensation Adjustment"
+            return "Promotion & Compensation Review"
         elif row['RoleStagnationIndex'] >= 0.6 and row['YearsInCurrentRole'] >= 4:
-            return "Lateral Role Rotation & Cross-Department Project Assignment"
+            return "Lateral Role Rotation / New Project"
         elif row['TrainingTimesLastYear'] <= 1:
-            return "Executive Upskilling & Leadership Accelerator Program"
+            return "Upskilling & Training Program"
         elif row['ManagerStabilityImpact'] == 'Prolonged Stagnant Manager Dyad':
-            return "Mentorship Realignment & Skip-Level Career Planning"
+            return "Manager Mentorship & Skip-Level Check-in"
         else:
-            return "Standard Annual Career Progression Tracking"
+            return "Regular Annual Review"
 
     data['PrescriptiveAction'] = data.apply(generate_prescriptive_action, axis=1)
 
@@ -190,9 +179,7 @@ def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_full_processed_dataset(file_path: str = None) -> pd.DataFrame:
-    """
-    Convenience helper to load raw data and apply full feature engineering pipeline.
-    """
+    """Loads raw data and runs feature engineering."""
     raw_df = load_raw_data(file_path)
     processed_df = engineer_features(raw_df)
     return processed_df
